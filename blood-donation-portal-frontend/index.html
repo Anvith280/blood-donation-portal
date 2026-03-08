@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RaktSetu — Blood & Plasma Donation Portal India</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── HOME ONLY ── */
+.hero {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 110px 5% 70px;
+  gap: 5rem;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-200px; right:-200px;
+  width:700px; height:700px;
+  background:radial-gradient(circle, rgba(192,21,42,0.06) 0%, transparent 70%);
+  border-radius:50%; pointer-events:none;
+}
+.hero::after {
+  content:''; position:absolute; bottom:-100px; left:-100px;
+  width:400px; height:400px;
+  background:radial-gradient(circle, rgba(212,118,42,0.05) 0%, transparent 70%);
+  border-radius:50%; pointer-events:none;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(192,21,42,0.08); border:1px solid rgba(192,21,42,0.2);
+  color:var(--crimson); padding:6px 14px; border-radius:50px;
+  font-size:0.75rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+  margin-bottom:1.5rem;
+}
+.hero-badge::before { content:'●'; font-size:0.45rem; animation:blink 1.8s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+.hero-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.6rem,4.8vw,4.2rem);
+  font-weight:900; line-height:1.08;
+  margin-bottom:1.3rem;
+}
+.hero-title .accent { color:var(--crimson); }
+.hero-sub {
+  font-size:1.05rem; color:var(--muted); line-height:1.75;
+  max-width:500px; margin-bottom:2.8rem;
+}
+.hero-actions { display:flex; gap:1rem; flex-wrap:wrap; }
+
+.hero-stats {
+  display:flex; gap:3rem; margin-top:3.5rem;
+  padding-top:2rem; border-top:1px solid var(--border);
+}
+.stat-num {
+  font-family:'Playfair Display',serif;
+  font-size:2.1rem; font-weight:900; color:var(--crimson);
+  display:block; line-height:1;
+}
+.stat-label { font-size:0.78rem; color:var(--muted); font-weight:500; margin-top:3px; display:block; }
+
+/* Blood group visual */
+.hero-visual { display:flex; justify-content:center; align-items:center; }
+.bg-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; width:100%; max-width:390px; }
+.bg-tile {
+  aspect-ratio:1; border-radius:18px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:900;
+  cursor:pointer; border:2px solid transparent;
+  text-decoration:none; transition:all 0.25s;
+}
+.bg-tile.blood { background:rgba(192,21,42,0.08); color:var(--crimson); border-color:rgba(192,21,42,0.14); }
+.bg-tile.blood:hover { background:var(--crimson); color:white; transform:scale(1.07); box-shadow:0 8px 24px rgba(192,21,42,0.3); }
+.bg-tile.plasma { background:rgba(212,118,42,0.1); color:var(--plasma); border-color:rgba(212,118,42,0.18); }
+.bg-tile.plasma:hover { background:var(--plasma); color:white; transform:scale(1.07); }
+.bg-tile small { font-family:'DM Sans',sans-serif; font-size:0.52rem; font-weight:600; letter-spacing:0.04em; opacity:0.65; text-transform:uppercase; margin-top:2px; }
+.bg-tile.wide { grid-column:span 2; aspect-ratio:auto; padding:18px; flex-direction:row; gap:10px; }
+.visual-hint { text-align:center; margin-top:14px; font-size:0.78rem; color:var(--muted); }
+
+/* How it works */
+.how-section { padding:90px 5%; background:var(--charcoal); }
+.how-section .section-tag { 
+  display: inline-block;
+  background: rgba(255,255,255,0.1); 
+  color: rgba(255,255,255,0.65);
+  padding: 4px 12px; 
+  border-radius: 50px;
+  font-size: 2rem; 
+  font-weight: 700; 
+  letter-spacing: 0.05em; 
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.how-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3vw,2.6rem); font-weight:900; color:white; margin:0.8rem 0; }
+.how-sub { color:rgba(255,255,255,0.55); font-size:1rem; line-height:1.7; max-width:520px; }
+.steps { display:grid; grid-template-columns:repeat(3,1fr); gap:1.8rem; margin-top:3.5rem; }
+.step {
+  padding:30px; border-radius:20px;
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);
+  position:relative; overflow:hidden;
+  transition:border-color 0.2s;
+}
+.step:hover { border-color:rgba(192,21,42,0.4); }
+.step-num {
+  font-family:'Playfair Display',serif; font-size:4.5rem; font-weight:900;
+  color:rgba(192,21,42,0.18); position:absolute; top:-8px; right:18px; line-height:1;
+}
+.step-icon { font-size:1.9rem; margin-bottom:1rem; display:block; }
+.step h4 { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:800; color:white; margin-bottom:0.6rem; }
+.step p { font-size:0.85rem; color:rgba(255,255,255,0.55); line-height:1.7; }
+.step-cta { display:inline-flex; align-items:center; gap:6px; margin-top:1rem; font-size:0.82rem; font-weight:700; color:var(--crimson); text-decoration:none; }
+.step-cta:hover { gap:10px; }
+
+/* CTA strip */
+.cta-strip {
+  padding:80px 5%; background:var(--crimson);
+  display:grid; grid-template-columns:1fr auto; gap:2rem; align-items:center;
+}
+.cta-strip h2 { font-family:'Playfair Display',serif; font-size:clamp(1.6rem,3vw,2.2rem); font-weight:900; color:white; }
+.cta-strip p { color:rgba(255,255,255,0.75); margin-top:0.5rem; }
+.btn-white { background:white; color:var(--crimson); font-weight:700; border:none; }
+.btn-white:hover { background:var(--ivory); transform:translateY(-2px); }
+
+@media(max-width:860px){
+  .hero { grid-template-columns:1fr; gap:3rem; padding-top:100px; }
+  .hero-visual { order:-1; }
+  .bg-grid { max-width:300px; margin:0 auto; }
+  .steps { grid-template-columns:1fr; }
+  .cta-strip { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="nav-container"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-badge">🇮🇳 India's Voluntary Donor Directory</div>
+    <h1 class="hero-title">
+      Every Drop<br><span class="accent">Saves a Life.</span><br>Find Donors<br>Across India.
+    </h1>
+    <p class="hero-sub">RaktSetu connects patients in need with registered blood and plasma donors across 500+ Indian cities — free, voluntary, and instant.</p>
+    <div class="hero-actions">
+      <a href="find-donor.html" class="btn btn-primary btn-lg">🔍 Find a Donor</a>
+      <a href="register.html" class="btn btn-outline btn-lg">Register as Donor</a>
+    </div>
+    <div class="hero-stats">
+      <div><span class="stat-num">500+</span><span class="stat-label">Indian Cities</span></div>
+      <div><span class="stat-num">8</span><span class="stat-label">Blood Groups</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div>
+      <div class="bg-grid">
+        <a href="find-donor.html?bg=A%2B" class="bg-tile blood">A+<small>Blood</small></a>
+        <a href="find-donor.html?bg=A-" class="bg-tile blood">A−<small>Blood</small></a>
+        <a href="find-donor.html?bg=B%2B" class="bg-tile blood">B+<small>Blood</small></a>
+        <a href="find-donor.html?bg=B-" class="bg-tile blood">B−<small>Blood</small></a>
+        <a href="find-donor.html?bg=O%2B" class="bg-tile blood">O+<small>Blood</small></a>
+        <a href="find-donor.html?bg=O-" class="bg-tile blood">O−<small>Blood</small></a>
+        <a href="find-donor.html?bg=AB%2B" class="bg-tile blood">AB+<small>Blood</small></a>
+        <a href="find-donor.html?bg=AB-" class="bg-tile blood">AB−<small>Blood</small></a>
+        <a href="find-donor.html?type=plasma" class="bg-tile plasma wide">🧪 COVID-19 Plasma Donors</a>
+        <a href="find-donor.html" class="bg-tile plasma wide">🔍 Search All Donors</a>
+      </div>
+      <p class="visual-hint">Tap any group to find donors →</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="section-tag">How It Works</div>
+  <h2 class="how-title">Simple. Fast. Life-Saving.</h2>
+  <p class="how-sub">Three steps to connect with the right donor anywhere in India.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <span class="step-icon">🔍</span>
+      <h4>Search for Donors</h4>
+      <p>Select the required blood group and your city. Browse registered voluntary donors and see their contact details instantly.</p>
+      <a href="find-donor.html" class="step-cta">Find a Donor →</a>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <span class="step-icon">📞</span>
+      <h4>Contact Directly</h4>
+      <p>Reach donors directly via phone or email listed on their profile. RaktSetu connects you — the rest is between you and the donor.</p>
+      <a href="find-donor.html" class="step-cta">Search Now →</a>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <span class="step-icon">🏥</span>
+      <h4>Donate at a Hospital</h4>
+      <p>Coordinate with the patient and hospital. Always ensure proper medical screening before any donation or acceptance.</p>
+      <a href="register.html" class="step-cta">Become a Donor →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP -->
+<div class="cta-strip">
+  <div>
+    <h2>Want to save a life today?</h2>
+    <p>Register as a blood or plasma donor — your profile will be visible to patients across India who need your help.</p>
+  </div>
+  <div style="display:flex;gap:1rem;flex-wrap:wrap">
+    <a href="register.html" class="btn btn-white btn-lg">🩸 Register as Donor</a>
+    <a href="post-requirement.html" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.35)">📋 Post a Requirement</a>
+  </div>
+</div>
+
+<div id="footer-container"></div>
+
+<script src="shared.js"></script>
+<script>
+  document.getElementById('nav-container').innerHTML = renderNav('index.html');
+  document.getElementById('footer-container').innerHTML = renderFooter();
+</script>
+</body>
+</html>

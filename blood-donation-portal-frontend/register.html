@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register as a Donor — RaktSetu</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.reg-page { padding:50px 5% 80px; display:grid; grid-template-columns:1fr 1.3fr; gap:5rem; align-items:start; }
+
+/* Info side */
+.info-side {}
+.info-lead { font-size:1.05rem; color:var(--muted); line-height:1.75; margin-bottom:2rem; }
+.info-cards { display:flex; flex-direction:column; gap:14px; }
+.info-card {
+  display:flex; gap:16px; align-items:flex-start;
+  padding:20px; border-radius:16px;
+  background:white; border:1px solid var(--border);
+  transition:border-color 0.2s;
+}
+.info-card:hover { border-color:rgba(192,21,42,0.3); }
+.ic-icon {
+  width:46px; height:46px; border-radius:13px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem; flex-shrink:0;
+}
+.ic-icon.red { background:rgba(192,21,42,0.09); }
+.ic-icon.orange { background:rgba(212,118,42,0.1); }
+.ic-icon.green { background:rgba(26,122,74,0.08); }
+.ic-icon.blue { background:rgba(30,100,200,0.08); }
+.info-card h4 { font-weight:700; font-size:0.93rem; margin-bottom:4px; }
+.info-card p { font-size:0.81rem; color:var(--muted); line-height:1.6; }
+
+/* Form side */
+.reg-form-box {
+  background:white; border-radius:24px; padding:44px;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+  position:sticky; top:88px;
+}
+.reg-form-box h2 { font-family:'Playfair Display',serif; font-size:1.7rem; font-weight:900; margin-bottom:0.4rem; }
+.reg-form-box .form-lead { font-size:0.85rem; color:var(--muted); margin-bottom:1.8rem; }
+
+/* Donor type buttons */
+.dtype-row { display:flex; gap:10px; margin-bottom:1.8rem; }
+.dtype-btn {
+  flex:1; padding:13px; border-radius:13px;
+  border:2px solid var(--border); cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:700;
+  background:white; color:var(--muted); text-align:center; transition:all 0.2s;
+}
+.dtype-btn.sel-blood { border-color:var(--crimson); color:var(--crimson); background:rgba(192,21,42,0.05); }
+.dtype-btn.sel-plasma { border-color:var(--plasma); color:var(--plasma); background:rgba(212,118,42,0.05); }
+
+.form-stack { display:flex; flex-direction:column; gap:15px; }
+
+.submit-row { margin-top:6px; }
+.reg-submit {
+  width:100%; padding:15px; border-radius:50px; border:none; cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:700; color:white;
+  transition:all 0.22s;
+}
+.reg-submit.blood-mode { background:var(--crimson); box-shadow:0 4px 20px rgba(192,21,42,0.3); }
+.reg-submit.blood-mode:hover { background:var(--crimson-dark); transform:translateY(-2px); }
+.reg-submit.plasma-mode { background:var(--plasma); box-shadow:0 4px 20px rgba(212,118,42,0.3); }
+.reg-submit.plasma-mode:hover { background:#B85E1A; transform:translateY(-2px); }
+
+/* Success screen */
+.success-screen {
+  text-align:center; padding:20px 0;
+}
+.success-screen .s-icon { font-size:4rem; display:block; margin-bottom:1rem; }
+.success-screen h3 { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; margin-bottom:0.6rem; color:var(--success); }
+.success-screen p { color:var(--muted); font-size:0.9rem; line-height:1.7; margin-bottom:1.5rem; }
+.success-actions { display:flex; flex-direction:column; gap:10px; }
+
+@media(max-width:1000px){
+  .reg-page { grid-template-columns:1fr; }
+  .reg-form-box { position:static; }
+}
+</style>
+</head>
+<body>
+<div id="nav-container"></div>
+
+<div class="page-header">
+  <div class="page-tag">Register</div>
+  <h1 class="page-title">Become a <span class="accent">Voluntary Donor</span></h1>
+  <p class="page-subtitle">Register your profile as a blood or plasma donor. Patients in your city will be able to find and contact you directly.</p>
+</div>
+
+<div class="reg-page">
+  <!-- INFO SIDE -->
+  <div class="info-side">
+    <p class="info-lead">Your registration takes less than 2 minutes. Once done, your profile is listed in our directory and visible to anyone searching for donors in your city.</p>
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="ic-icon red">🩸</div>
+        <div>
+          <h4>Blood Donation Eligibility</h4>
+          <p>You should be 18–65 years old, weigh at least 45 kg, and be in good general health. Blood can be donated once every 90 days.</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon orange">🧪</div>
+        <div>
+          <h4>COVID-19 Plasma Donors</h4>
+          <p>If you've recovered from COVID-19, you may be eligible to donate convalescent plasma to help critically ill patients. Donation is typically possible 28 days after recovery.</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon green">🔒</div>
+        <div>
+          <h4>Your Privacy Matters</h4>
+          <p>Only your name, blood group, city, and contact info is shown. You always have the choice whether to donate — this is completely voluntary.</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon blue">✅</div>
+        <div>
+          <h4>Free & Always Will Be</h4>
+          <p>RaktSetu is a free public service. We do not charge donors or recipients. Blood donation must always be voluntary and unpaid.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM SIDE -->
+  <div class="reg-form-box">
+    <div id="formView">
+      <h2>🩸 Register as a Donor</h2>
+      <p class="form-lead">Fill in your details below. Fields marked * are required.</p>
+
+      <div class="dtype-row">
+        <button class="dtype-btn sel-blood" id="dTypeBlood" onclick="setDType('blood')">🩸 Blood Donor</button>
+        <button class="dtype-btn" id="dTypePlasma" onclick="setDType('plasma')">🧪 COVID-19 Plasma Donor</button>
+      </div>
+
+      <div class="form-stack">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input class="form-control" type="text" id="rName" placeholder="Your full name">
+          </div>
+          <div class="form-group">
+            <label>Age *</label>
+            <input class="form-control" type="number" id="rAge" placeholder="e.g. 28" min="18" max="65">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Blood Group *</label>
+            <select class="form-control" id="rBG">
+              <option value="">Select</option>
+              <option>A+</option><option>A−</option><option>B+</option><option>B−</option>
+              <option>O+</option><option>O−</option><option>AB+</option><option>AB−</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select class="form-control" id="rGender">
+              <option value="">Select</option>
+              <option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>State *</label>
+            <select class="form-control" id="rState" onchange="onRegStateChange()"></select>
+          </div>
+          <div class="form-group">
+            <label>City *</label>
+            <select class="form-control" id="rCity"></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input class="form-control" type="tel" id="rPhone" placeholder="+91 XXXXX XXXXX">
+          </div>
+          <div class="form-group">
+            <label>Email (optional)</label>
+            <input class="form-control" type="email" id="rEmail" placeholder="your@email.com">
+          </div>
+        </div>
+        <div id="plasmaField" style="display:none">
+          <div class="form-group">
+            <label>Approximate COVID-19 Recovery Date</label>
+            <input class="form-control" type="date" id="rRecovery">
+          </div>
+        </div>
+        <div class="submit-row">
+          <button class="reg-submit blood-mode" id="rSubmit" onclick="submitReg()">Register as Blood Donor →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="successView" class="hidden">
+      <div class="success-screen">
+        <span class="s-icon">🎉</span>
+        <h3>You're Registered!</h3>
+        <p>Thank you for joining RaktSetu. Your profile is now visible to patients searching for <strong id="sDonorType">blood</strong> donors in <strong id="sCity">your city</strong>.</p>
+        <p>When someone needs your help, they will contact you directly on the number you provided.</p>
+        <div class="success-actions">
+          <a href="find-donor.html" class="btn btn-primary btn-full">🔍 Browse Other Donors</a>
+          <a href="post-requirement.html" class="btn btn-outline btn-full">📋 Post a Requirement</a>
+          <a href="index.html" class="btn btn-outline btn-full">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="footer-container"></div>
+<script src="shared.js"></script>
+<script>
+  document.getElementById('nav-container').innerHTML = renderNav('register.html');
+  document.getElementById('footer-container').innerHTML = renderFooter();
+
+  populateStates(document.getElementById('rState'));
+  let donorType = 'blood';
+
+  function setDType(type) {
+    donorType = type;
+    document.getElementById('dTypeBlood').className = 'dtype-btn' + (type==='blood'?' sel-blood':'');
+    document.getElementById('dTypePlasma').className = 'dtype-btn' + (type==='plasma'?' sel-plasma':'');
+    document.getElementById('plasmaField').style.display = type==='plasma'?'block':'none';
+    const btn = document.getElementById('rSubmit');
+    btn.textContent = type==='blood'?'Register as Blood Donor →':'Register as Plasma Donor →';
+    btn.className = 'reg-submit ' + (type==='blood'?'blood-mode':'plasma-mode');
+  }
+
+  function onRegStateChange() {
+    populateCities(document.getElementById('rState').value, document.getElementById('rCity'));
+  }
+
+  async function submitReg() {
+    const name  = document.getElementById('rName').value.trim();
+    const age   = document.getElementById('rAge').value;
+    const bg    = document.getElementById('rBG').value;
+    const state = document.getElementById('rState').value;
+    const city  = document.getElementById('rCity').value;
+    const phone = document.getElementById('rPhone').value.trim();
+    const email = document.getElementById('rEmail').value.trim();
+    const gender= document.getElementById('rGender').value || 'Not specified';
+
+    if (!name||!age||!bg||!state||!city||!phone) { alert('Please fill all required fields (marked with *).'); return; }
+    if (age<18||age>65) { alert('Age must be between 18 and 65 for blood/plasma donation eligibility.'); return; }
+
+    // 🚨 THIS IS THE FIX: Call the new database function
+    await addDonorToDB({name, age: +age, bg, type: donorType, state, city, phone, email, gender});
+
+    document.getElementById('sDonorType').textContent = donorType;
+    document.getElementById('sCity').textContent = city + ', ' + state;
+    document.getElementById('formView').classList.add('hidden');
+    document.getElementById('successView').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>

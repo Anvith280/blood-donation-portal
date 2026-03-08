@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find a Donor — RaktSetu</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.search-page { padding: 40px 5% 80px; }
+
+/* Tab toggle */
+.type-tabs {
+  display:inline-flex; background:var(--ivory); padding:5px; border-radius:50px;
+  gap:6px; margin-bottom:2rem; border:1px solid var(--border);
+}
+.type-tab {
+  padding:10px 24px; border-radius:50px; border:none; cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:700;
+  color:var(--muted); background:transparent; transition:all 0.22s;
+}
+.type-tab.active-blood { background:var(--crimson); color:white; }
+.type-tab.active-plasma { background:var(--plasma); color:white; }
+
+/* Search card */
+.search-card {
+  background:white; border-radius:20px; padding:36px;
+  box-shadow:var(--shadow); border:1px solid var(--border);
+  margin-bottom:2.5rem;
+}
+.search-grid { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:14px; align-items:end; }
+
+/* Results */
+.results-meta {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:1.2rem; flex-wrap:wrap; gap:0.5rem;
+}
+.results-count { font-size:0.88rem; color:var(--muted); }
+.results-count strong { color:var(--crimson); font-size:1rem; }
+.results-label { font-size:0.82rem; color:var(--muted); }
+.results-label strong { color:var(--charcoal); }
+
+.donor-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:16px; }
+
+.donor-card {
+  background:white; border-radius:18px; padding:22px;
+  border:1.5px solid var(--border); transition:all 0.22s;
+}
+.donor-card:hover { border-color:rgba(192,21,42,0.35); box-shadow:var(--shadow); transform:translateY(-3px); }
+.dc-top { display:flex; align-items:flex-start; gap:14px; margin-bottom:16px; }
+.dc-avatar {
+  width:50px; height:50px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-size:1rem; font-weight:900;
+  flex-shrink:0;
+}
+.dc-avatar.blood { background:rgba(192,21,42,0.1); color:var(--crimson); }
+.dc-avatar.plasma { background:rgba(212,118,42,0.1); color:var(--plasma); }
+.dc-info { flex:1; min-width:0; }
+.dc-name { font-weight:700; font-size:0.96rem; margin-bottom:3px; }
+.dc-location { font-size:0.79rem; color:var(--muted); display:flex; align-items:center; gap:4px; }
+.dc-badge {
+  padding:3px 10px; border-radius:50px;
+  font-size:0.68rem; font-weight:700; letter-spacing:0.04em; white-space:nowrap;
+  flex-shrink:0;
+}
+.dc-badge.blood { background:rgba(192,21,42,0.09); color:var(--crimson); }
+.dc-badge.plasma { background:rgba(212,118,42,0.1); color:var(--plasma); }
+.dc-details { font-size:0.81rem; color:var(--muted); line-height:1.7; margin-bottom:14px; }
+.dc-btn {
+  width:100%; padding:10px; border-radius:10px;
+  background:transparent; border:1.5px solid var(--border);
+  font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:700;
+  color:var(--crimson); cursor:pointer; transition:all 0.2s;
+}
+.dc-btn:hover { background:var(--crimson); color:white; border-color:var(--crimson); }
+
+.empty-state {
+  grid-column:1/-1; text-align:center; padding:60px 20px;
+  background:white; border-radius:18px; border:1.5px dashed var(--border);
+}
+.empty-state .e-icon { font-size:3rem; margin-bottom:1rem; display:block; }
+.empty-state h3 { font-family:'Playfair Display',serif; font-size:1.4rem; margin-bottom:0.5rem; }
+.empty-state p { color:var(--muted); font-size:0.9rem; margin-bottom:1.5rem; }
+
+@media(max-width:860px){
+  .search-grid { grid-template-columns:1fr 1fr; }
+  .search-grid > .btn { grid-column:span 2; }
+}
+</style>
+</head>
+<body>
+<div id="nav-container"></div>
+
+<div class="page-header">
+  <div class="page-tag">Find a Donor</div>
+  <h1 class="page-title">Search Blood & <span class="accent">Plasma Donors</span></h1>
+  <p class="page-subtitle">Select your required blood group, donor type, and location to find voluntary donors near you across India.</p>
+</div>
+
+<div class="search-page">
+  <div class="search-card">
+    <div class="type-tabs">
+      <button class="type-tab active-blood" id="tabBlood" onclick="setTab('blood')">🩸 Blood Donors</button>
+      <button class="type-tab" id="tabPlasma" onclick="setTab('plasma')">🧪 COVID-19 Plasma</button>
+    </div>
+    <div class="search-grid">
+      <div class="form-group">
+        <label>Blood Group Required</label>
+        <select class="form-control" id="filterBG">
+          <option value="">All Blood Groups</option>
+          <option>A+</option><option>A−</option><option>B+</option><option>B−</option>
+          <option>O+</option><option>O−</option><option>AB+</option><option>AB−</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>State</label>
+        <select class="form-control" id="filterState" onchange="onStateChange()"></select>
+      </div>
+      <div class="form-group">
+        <label>City</label>
+        <select class="form-control" id="filterCity"></select>
+      </div>
+      <button class="btn btn-primary" onclick="runSearch()" style="border-radius:12px;padding:13px 22px;white-space:nowrap">Search →</button>
+    </div>
+  </div>
+
+  <div id="resultsSection" style="display:none">
+    <div class="results-meta">
+      <div class="results-count">Found <strong id="resCount">0</strong> donors</div>
+      <div class="results-label">Showing results for: <strong id="resLabel">—</strong></div>
+    </div>
+    <div class="donor-grid" id="donorGrid"></div>
+  </div>
+
+  <div id="defaultState" style="text-align:center;padding:60px 0;color:var(--muted)">
+    <div style="font-size:3.5rem;margin-bottom:1rem">🩸</div>
+    <p style="font-size:1rem">Select a blood group and location above, then click <strong>Search</strong> to find donors.</p>
+    <p style="font-size:0.85rem;margin-top:0.5rem">Or <a href="post-requirement.html" style="color:var(--crimson);font-weight:600">post a requirement</a> and let donors reach out to you.</p>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="mName"></h3>
+    <p class="modal-sub" id="mSub"></p>
+    <div id="mInfo"></div>
+    <p style="font-size:0.73rem;color:#aaa;margin-top:1.2rem;line-height:1.6">⚠️ Always conduct proper medical screening before proceeding. Consult a doctor before any transfusion. RaktSetu is a directory — not a medical service.</p>
+  </div>
+</div>
+
+<div id="footer-container"></div>
+<script src="shared.js"></script>
+<script>
+  document.getElementById('nav-container').innerHTML = renderNav('find-donor.html');
+  document.getElementById('footer-container').innerHTML = renderFooter();
+
+  let currentType = 'blood';
+
+  // Init dropdowns
+  populateStates(document.getElementById('filterState'));
+
+  // Read URL params
+  const params = new URLSearchParams(location.search);
+  const paramBG = params.get('bg');
+  const paramType = params.get('type');
+
+  if (paramType === 'plasma') { setTab('plasma'); }
+  if (paramBG) {
+    const bgEl = document.getElementById('filterBG');
+    [...bgEl.options].forEach(o => { if(o.value === paramBG) o.selected = true; });
+  }
+  if (paramBG || paramType) { runSearch(); }
+
+  function setTab(type) {
+    currentType = type;
+    document.getElementById('tabBlood').className = 'type-tab' + (type==='blood'?' active-blood':'');
+    document.getElementById('tabPlasma').className = 'type-tab' + (type==='plasma'?' active-plasma':'');
+  }
+
+  function onStateChange() {
+    const state = document.getElementById('filterState').value;
+    populateCities(state, document.getElementById('filterCity'));
+  }
+
+  async function runSearch() {
+    const bg = document.getElementById('filterBG').value;
+    const state = document.getElementById('filterState').value;
+    const city = document.getElementById('filterCity').value;
+
+    // AWAIT the data from your new Node.js server
+    const allDonors = await fetchDonors();
+    
+    // Filter the live database results
+    let donors = allDonors.filter(d => d.type === currentType);
+    if (bg) donors = donors.filter(d => d.bg === bg);
+    if (state) donors = donors.filter(d => d.state === state);
+    if (city) donors = donors.filter(d => d.city === city);
+
+    document.getElementById('defaultState').style.display = 'none';
+    document.getElementById('resultsSection').style.display = 'block';
+    document.getElementById('resCount').textContent = donors.length;
+
+    const parts = [];
+    if (bg) parts.push(bg);
+    if (city) parts.push(city);
+    else if (state) parts.push(state);
+    else parts.push('All India');
+    parts.push(currentType === 'plasma' ? 'Plasma' : 'Blood');
+    document.getElementById('resLabel').textContent = parts.join(' · ');
+
+    const grid = document.getElementById('donorGrid');
+    if (donors.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <span class="e-icon">🔍</span>
+          <h3>No donors found</h3>
+          <p>No ${currentType} donors match your search. Try widening your filters or post a requirement.</p>
+          <a href="post-requirement.html" class="btn btn-primary">Post a Requirement →</a>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = donors.map(d => `
+      <div class="donor-card">
+        <div class="dc-top">
+          <div class="dc-avatar ${d.type}">${d.bg}</div>
+          <div class="dc-info">
+            <div class="dc-name">${d.name}</div>
+            <div class="dc-location">📍 ${d.city}, ${d.state}</div>
+          </div>
+          <div class="dc-badge ${d.type}">${d.type==='plasma'?'Plasma':'Blood'}</div>
+        </div>
+        <div class="dc-details">Age ${d.age} &nbsp;·&nbsp; ${d.gender} &nbsp;·&nbsp; Blood Group <strong>${d.bg}</strong></div>
+        <button class="dc-btn" onclick='showContact(${JSON.stringify(d)})'>View Contact Details →</button>
+      </div>
+    `).join('');
+  }
+
+  function showContact(d) {
+    document.getElementById('mName').textContent = d.name;
+    document.getElementById('mSub').textContent = `${d.bg} ${d.type==='plasma'?'Plasma':'Blood'} Donor · ${d.city} · Age ${d.age} · ${d.gender}`;
+    document.getElementById('mInfo').innerHTML = `
+      <div class="contact-row"><div class="c-icon">📞</div><div><div class="c-label">Phone</div><div class="c-val">${d.phone}</div></div></div>
+      ${d.email?`<div class="contact-row"><div class="c-icon">✉️</div><div><div class="c-label">Email</div><div class="c-val">${d.email}</div></div></div>`:''}
+      <div class="contact-row"><div class="c-icon">🩸</div><div><div class="c-label">Blood Group</div><div class="c-val">${d.bg}</div></div></div>
+      <div class="contact-row"><div class="c-icon">📍</div><div><div class="c-label">Location</div><div class="c-val">${d.city}, ${d.state}</div></div></div>
+    `;
+    document.getElementById('modal').classList.remove('hidden');
+  }
+
+  function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+  document.getElementById('modal').addEventListener('click', e => { if(e.target===document.getElementById('modal')) closeModal(); });
+</script>
+</body>
+</html>

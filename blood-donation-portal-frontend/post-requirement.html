@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post a Requirement — RaktSetu</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.req-page { padding:50px 5% 80px; display:grid; grid-template-columns:1.2fr 1fr; gap:5rem; align-items:start; }
+
+/* Live board */
+.board-side {}
+.board-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; }
+.board-title { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:800; }
+.live-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  background:rgba(192,21,42,0.09); color:var(--crimson);
+  padding:4px 10px; border-radius:50px;
+  font-size:0.72rem; font-weight:700; letter-spacing:0.04em;
+}
+.live-badge::before { content:'●'; font-size:0.45rem; animation:blink 1.5s infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+.req-list { display:flex; flex-direction:column; gap:12px; max-height:680px; overflow-y:auto; }
+.req-list::-webkit-scrollbar { width:4px; }
+.req-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+.req-card {
+  background:white; border-radius:16px; padding:18px 20px;
+  border:1.5px solid var(--border); display:flex; gap:14px; align-items:center;
+  transition:all 0.2s;
+}
+.req-card:hover { border-color:rgba(192,21,42,0.3); box-shadow:var(--shadow); }
+.req-bg {
+  width:52px; height:52px; border-radius:13px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-weight:900; font-size:1rem;
+  flex-shrink:0; text-align:center; line-height:1.2;
+}
+.req-bg.blood { background:rgba(192,21,42,0.09); color:var(--crimson); }
+.req-bg.plasma { background:rgba(212,118,42,0.1); color:var(--plasma); font-size:0.75rem; }
+.req-body { flex:1; min-width:0; }
+.req-body h4 { font-weight:700; font-size:0.9rem; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.req-body p { font-size:0.78rem; color:var(--muted); }
+.req-right { text-align:right; flex-shrink:0; }
+.req-time { font-size:0.73rem; color:var(--muted); }
+.urg-tag {
+  display:inline-block; font-size:0.67rem; font-weight:800;
+  padding:2px 8px; border-radius:50px;
+  text-transform:uppercase; letter-spacing:0.05em;
+  margin-bottom:3px;
+}
+.urg-tag.urgent { background:rgba(192,21,42,0.1); color:var(--crimson); }
+.urg-tag.critical { background:var(--crimson); color:white; }
+
+/* Form side */
+.post-form-box {
+  background:white; border-radius:24px; padding:44px;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+  position:sticky; top:88px;
+}
+.post-form-box h2 { font-family:'Playfair Display',serif; font-size:1.7rem; font-weight:900; margin-bottom:0.4rem; }
+.post-form-box .form-lead { font-size:0.85rem; color:var(--muted); margin-bottom:1.8rem; }
+
+.urgency-row { display:flex; gap:8px; }
+.urg-btn {
+  flex:1; padding:11px 8px; border-radius:11px;
+  border:2px solid var(--border); cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:700;
+  background:white; color:var(--muted); text-align:center; transition:all 0.2s;
+}
+.urg-btn.sel { border-color:var(--crimson); color:var(--crimson); background:rgba(192,21,42,0.05); }
+.urg-btn.sel-crit { border-color:#8B0D1D; color:#8B0D1D; background:rgba(139,13,29,0.07); }
+
+.post-submit {
+  width:100%; padding:15px; border-radius:50px; border:none; cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:700; color:white;
+  background:var(--crimson); box-shadow:0 4px 20px rgba(192,21,42,0.3);
+  transition:all 0.22s; margin-top:4px;
+}
+.post-submit:hover { background:var(--crimson-dark); transform:translateY(-2px); }
+
+/* Success */
+.success-screen { text-align:center; padding:10px 0; }
+.success-screen .s-icon { font-size:3.5rem; display:block; margin-bottom:1rem; }
+.success-screen h3 { font-family:'Playfair Display',serif; font-size:1.7rem; font-weight:900; margin-bottom:0.5rem; color:var(--success); }
+.success-screen p { color:var(--muted); font-size:0.88rem; line-height:1.7; margin-bottom:1.4rem; }
+
+@media(max-width:1000px){
+  .req-page { grid-template-columns:1fr; }
+  .post-form-box { position:static; }
+}
+</style>
+</head>
+<body>
+<div id="nav-container"></div>
+
+<div class="page-header">
+  <div class="page-tag">Post a Requirement</div>
+  <h1 class="page-title">Need Blood or <span class="accent">Plasma Urgently?</span></h1>
+  <p class="page-subtitle">Post your requirement so registered donors in your city and across India can reach out to help you.</p>
+</div>
+
+<div class="req-page">
+
+  <div class="board-side">
+    <div class="board-top">
+      <div class="board-title">📋 Live Requirements</div>
+      <div class="live-badge">LIVE</div>
+    </div>
+    <div class="req-list" id="reqList">
+      </div>
+  </div>
+
+  <div class="post-form-box">
+    <div id="postFormView">
+      <h2>📋 Post a Requirement</h2>
+      <p class="form-lead">Let donors find you. Fields marked * are required.</p>
+
+      <div class="form-stack" style="display:flex;flex-direction:column;gap:14px">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Your Name *</label>
+            <input class="form-control" type="text" id="pName" placeholder="Patient / relative name">
+          </div>
+          <div class="form-group">
+            <label>Blood Group Required *</label>
+            <select class="form-control" id="pBG">
+              <option value="">Select</option>
+              <option>A+</option><option>A−</option><option>B+</option><option>B−</option>
+              <option>O+</option><option>O−</option><option>AB+</option><option>AB−</option>
+              <option value="plasma">COVID-19 Plasma</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>State *</label>
+            <select class="form-control" id="pState" onchange="onPostStateChange()"></select>
+          </div>
+          <div class="form-group">
+            <label>City *</label>
+            <select class="form-control" id="pCity"></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Hospital / Location</label>
+          <input class="form-control" type="text" id="pHospital" placeholder="Hospital name and address">
+        </div>
+        <div class="form-group">
+          <label>Contact Number *</label>
+          <input class="form-control" type="tel" id="pPhone" placeholder="+91 XXXXX XXXXX">
+        </div>
+        <div class="form-group">
+          <label>Urgency Level</label>
+          <div class="urgency-row">
+            <button class="urg-btn" id="uNormal" onclick="setUrg('normal')">Normal</button>
+            <button class="urg-btn sel" id="uUrgent" onclick="setUrg('urgent')">🚨 Urgent</button>
+            <button class="urg-btn" id="uCritical" onclick="setUrg('critical')">⚠️ Critical</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Additional Notes</label>
+          <textarea class="form-control" id="pNotes" placeholder="Any additional details (e.g. hospital ward, best time to call)…"></textarea>
+        </div>
+        <button class="post-submit" onclick="submitPost()">Post Requirement →</button>
+      </div>
+    </div>
+
+    <div id="postSuccessView" class="hidden">
+      <div class="success-screen">
+        <span class="s-icon">✅</span>
+        <h3>Requirement Posted!</h3>
+        <p>Your requirement for <strong id="sReqBG"></strong> in <strong id="sReqCity"></strong> is now live on the board. Registered donors in your area can see it.</p>
+        <p>You can also search for donors directly to reach out yourself.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:1rem">
+          <a href="find-donor.html" class="btn btn-primary btn-full">🔍 Search Donors Now</a>
+          <button class="btn btn-outline btn-full" onclick="resetForm()">Post Another Requirement</button>
+          <a href="index.html" class="btn btn-outline btn-full">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="footer-container"></div>
+<script src="shared.js"></script>
+<script>
+  document.getElementById('nav-container').innerHTML = renderNav('post-requirement.html');
+  document.getElementById('footer-container').innerHTML = renderFooter();
+
+  populateStates(document.getElementById('pState'));
+  let urgency = 'urgent';
+
+  // Fetch from Database instead of Local Storage
+  async function renderReqs() {
+    const reqs = await fetchRequirements();
+    
+    document.getElementById('reqList').innerHTML = reqs.map(r => `
+      <div class="req-card">
+        <div class="req-bg ${r.type}">${r.bg==='plasma'?'COVID\nPlasma':r.bg}</div>
+        <div class="req-body">
+          <h4>${r.name} — ${r.city}, ${r.state}</h4>
+          <p>📞 ${r.phone}${r.hospital?' · '+r.hospital:''}</p>
+        </div>
+        <div class="req-right">
+          ${r.urgency!=='normal'?`<div class="urg-tag ${r.urgency}">${r.urgency}</div><br>`:''}
+          <div class="req-time">Live</div>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  // Call it immediately to load the board
+  renderReqs();
+
+  function onPostStateChange() {
+    populateCities(document.getElementById('pState').value, document.getElementById('pCity'));
+  }
+
+  function setUrg(level) {
+    urgency = level;
+    document.getElementById('uNormal').className = 'urg-btn'+(level==='normal'?' sel':'');
+    document.getElementById('uUrgent').className = 'urg-btn'+(level==='urgent'?' sel':'');
+    document.getElementById('uCritical').className = 'urg-btn'+(level==='critical'?' sel-crit':'');
+  }
+  setUrg('urgent');
+
+  // Post to Database instead of Local Storage
+  async function submitPost() {
+    const name  = document.getElementById('pName').value.trim();
+    const bg    = document.getElementById('pBG').value;
+    const state = document.getElementById('pState').value;
+    const city  = document.getElementById('pCity').value;
+    const phone = document.getElementById('pPhone').value.trim();
+    const hosp  = document.getElementById('pHospital').value.trim();
+
+    if (!name||!bg||!state||!city||!phone) { 
+      alert('Please fill all required fields (marked with *).'); 
+      return; 
+    }
+
+    const newReq = { name, bg, type: bg==='plasma'?'plasma':'blood', city, state, phone, hospital: hosp, urgency };
+
+    try {
+      // Send the data to your Node.js backend
+      await fetch('http://localhost:3000/api/requirements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newReq)
+      });
+
+      // Refresh the live board with the new data
+      renderReqs();
+
+      document.getElementById('sReqBG').textContent = bg==='plasma'?'COVID-19 Plasma':bg+' Blood';
+      document.getElementById('sReqCity').textContent = city+', '+state;
+      document.getElementById('postFormView').classList.add('hidden');
+      document.getElementById('postSuccessView').classList.remove('hidden');
+    } catch (e) {
+      console.error("Failed to post requirement:", e);
+      alert("Error connecting to the database. Make sure your server.js is running!");
+    }
+  }
+
+  function resetForm() {
+    ['pName','pPhone','pHospital','pNotes'].forEach(id=>document.getElementById(id).value='');
+    ['pBG','pState','pCity'].forEach(id=>document.getElementById(id).value='');
+    setUrg('urgent');
+    document.getElementById('postFormView').classList.remove('hidden');
+    document.getElementById('postSuccessView').classList.add('hidden');
+  }
+</script>
+</body>
+</html>
