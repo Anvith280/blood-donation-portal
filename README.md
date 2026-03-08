@@ -34,3 +34,9 @@ You will need a MySQL database. Create a table for `donors` and a table for `req
 3. Create a `.env` file in the root of the backend folder and add your database connection string:
    ```text
    DATABASE_URL="your_mysql_database_url_here"
+   (Note: Never commit your .env file to GitHub!)
+4. Run node server.js to start the server on http://localhost:3000.
+
+## 📝 Disclaimer
+
+This project was built for educational purposes. It is a directory only and not a verified medical service. Always consult medical professionals before blood transfusions.
