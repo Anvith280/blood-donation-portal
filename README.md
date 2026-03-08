@@ -1,9 +1,13 @@
-# RaktSetu: Blood & Plasma Donation Portal
+# 🩸 RaktSetu: Blood & Plasma Donation Portal
 
 RaktSetu is a full-stack web application built to connect voluntary blood and COVID-19 plasma donors with patients across India. It provides a real-time live board for urgent requirements and a searchable directory of registered donors.
 
-**Live Demo:** [Insert your Netlify leafy-crepe link here]
-**Backend API:** [Insert your Render link here]
+**Live Demo:** [https://leafy-crepe-34f486.netlify.app/](https://leafy-crepe-34f486.netlify.app/)  
+**Backend API:** Hosted on Render
+
+> **⚠️ Note on Live Demo Performance:** The backend Node.js server for this project is hosted on Render's free tier. If the server has been inactive for 15 minutes, it automatically spins down to save resources. 
+> 
+> Because of this, **your very first search or form submission might take 50–60 seconds to process** while the server "wakes up." Once it is awake, all subsequent requests will be instant!
 
 ## ✨ Key Features
 * **Donor Directory:** Users can register as blood or plasma donors, categorized by blood group and location.
